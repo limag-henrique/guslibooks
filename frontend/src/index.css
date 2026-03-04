@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-gusli-bg text-gusli-highlight-2 font-sans antialiased;
+  }
+}
