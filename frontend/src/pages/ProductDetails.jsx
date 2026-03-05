@@ -83,101 +83,150 @@ export default function ProductDetails() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8 md:py-16">
-            <button
-                onClick={() => navigate('/products')}
-                className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors font-bold uppercase text-sm tracking-widest"
-            >
-                <ArrowLeft size={20} /> Voltar ao catálogo
-            </button>
+        <div className="min-h-screen bg-gusli-bg  group/page flex flex-col pt-32">
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-20">
-                {/* Image Section */}
-                <div className="bg-gray-50 rounded-3xl p-8 lg:p-12 shadow-sm border border-gray-100 flex justify-center items-center min-h-[500px]">
-                    <img
-                        src={`http://localhost:3001${book.image_path}`}
-                        alt={book.name}
-                        className="max-w-full h-auto max-h-[600px] object-contain rounded drop-shadow-2xl"
-                        onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}
-                    />
-                </div>
+            <div className="max-w-[1600px] mx-auto px-6 md:px-12 w-full pb-20">
 
-                {/* Info Section */}
-                <div className="flex flex-col">
-                    <div className="mb-2 flex items-center gap-3">
-                        <span className="bg-[#12271D] text-white px-3 py-1 rounded text-xs font-bold tracking-widest uppercase shadow-sm">
-                            {book.genre || 'Ficção'}
-                        </span>
-                    </div>
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate('/products')}
+                    className="flex items-center gap-4 text-black hover:text-black mb-16 transition-colors font-bold text-sm tracking-wide "
+                >
+                    <ArrowLeft size={16} /> Voltar ao Catálogo
+                </button>
 
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#12271D] leading-tight mb-2 mt-4 tracking-tight">
-                        {book.name}
-                    </h1>
-                    <p className="text-xl text-gray-400 font-medium mb-8">Por {book.author}</p>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start mb-32 relative">
 
-                    <div className="prose prose-lg text-gray-600 mb-10 leading-relaxed font-light">
-                        <h3 className="font-bold text-[#12271D] mb-4 text-xl uppercase tracking-widest text-sm">Sinopse</h3>
-                        <p>{book.long_description || book.description}</p>
-                    </div>
-
-                    <div className="p-8 bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col gap-6 transform hover:-translate-y-1 transition-transform">
-                        <div className="flex items-center justify-between border-b pb-6 border-gray-100">
-                            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Preço</span>
-                            <span className="text-4xl font-black text-[#12271D]">R$ {book.price.toFixed(2)}</span>
+                    {/* Left Typography Block */}
+                    <div className="lg:col-span-5 flex flex-col order-2 lg:order-1 sticky top-32">
+                        <div className="mb-8">
+                            <span className="text-black tracking-wide font-bold text-lg mb-4 block">
+                                {book.genre || 'Ficção'}
+                            </span>
+                            <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-black tracking-tight leading-[0.85] mb-6">
+                                {book.name}
+                            </h1>
+                            <p className="text-black text-sm tracking-wide mb-12 border-b border-black/20 pb-12">
+                                Por <span
+                                    className="underline cursor-pointer hover:text-gray-700"
+                                    onClick={() => navigate(`/author/${encodeURIComponent(book.author)}`)}
+                                >{book.author}</span>
+                            </p>
                         </div>
 
-                        {variations && (
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Edição da Capa</label>
-                                <select
-                                    value={selectedVariation}
-                                    onChange={(e) => setSelectedVariation(e.target.value)}
-                                    className="w-full border-2 border-gray-200 rounded-xl p-4 text-base bg-gray-50 focus:outline-none focus:border-[#12271D] transition-colors cursor-pointer font-medium"
-                                >
-                                    {variations.map(v => (
-                                        <option key={v} value={v}>{v}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
+                        <div className="prose prose-invert prose-lg text-black mb-8 font-light leading-relaxed max-w-none">
+                            <p className="text-base md:text-xl opacity-90">
+                                {(() => {
+                                    const desc = book.long_description || book.description || '';
+                                    // Match various formats: "(320)", "320 páginas", "320 Páginas" at the end or anywhere
+                                    return desc.replace(/(?:\()?\d+\s*(?:páginas|paginas|Páginas|Paginas)(?:\))?/i, '')
+                                        .replace(/\(\d+\)/, '') // Catch standalone parenthesized numbers if they were meant to be pages
+                                        .replace(/\s\s+/g, ' ')
+                                        .trim();
+                                })()}
+                            </p>
+                        </div>
 
-                        <button
-                            onClick={() => addToCart(book, 1, selectedVariation)}
-                            className="bg-[#12271D] text-white hover:bg-black w-full py-5 rounded-xl transition-all shadow-md hover:shadow-xl flex justify-center items-center gap-3 text-lg font-bold uppercase tracking-wider"
-                        >
-                            <ShoppingBag size={24} />
-                            Adicionar ao Carrinho
-                        </button>
+                        {/* Pages Section */}
+                        {(() => {
+                            const desc = book.long_description || book.description || '';
+                            const pageMatchFull = desc.match(/(\d+)\s*(?:páginas|paginas|Páginas|Paginas)/i);
+                            const pageMatchParen = desc.match(/\((\d+)\)/);
+                            const pageCount = pageMatchFull ? pageMatchFull[1] : (pageMatchParen ? pageMatchParen[1] : null);
+
+                            if (pageCount) {
+                                return (
+                                    <div className="mb-16">
+                                        <p className="text-black font-bold text-sm tracking-widest uppercase pb-4 border-b border-black/10">
+                                            {pageCount} páginas de pura empolgação
+                                        </p>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })()}
                     </div>
+
+                    {/* Right Image Block */}
+                    <div className="lg:col-span-7 flex justify-center items-center order-1 lg:order-2 relative h-full w-full">
+                        <img
+                            src={`http://localhost:3001${book.image_path}`}
+                            alt={book.name}
+                            className="w-[180px] md:w-[220px] lg:w-[260px] max-w-none object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
+                            onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}
+                        />
+                    </div>
+                </div>
+
+                {/* Checkout Block (Fixed Bottom / Floating Style) */}
+                <div className="border-t border-black/20 pt-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-10 sticky bottom-0 bg-gusli-bg/95 backdrop-blur-md py-8 z-40">
+                    <div className="flex flex-col gap-4">
+                        <span className="text-[10px] font-bold text-black tracking-wide"></span>
+                        <span className="font-sans font-bold text-5xl md:text-6xl text-black leading-none">R$ {book.price.toFixed(2)}</span>
+                    </div>
+
+                    {variations ? (
+                        <div className="w-full md:w-auto">
+                            <label className="block text-[10px] font-bold text-black mb-3 tracking-wide">Variantes / Acabamento</label>
+                            <select
+                                value={selectedVariation}
+                                onChange={(e) => setSelectedVariation(e.target.value)}
+                                className="w-full md:w-64 border-b border-black/30 py-3 text-sm font-bold tracking-wide bg-transparent focus:outline-none text-black "
+                            >
+                                {variations.map(v => (
+                                    <option key={v} value={v} className="bg-gusli-bg text-black">{v}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : (
+                        <div className="w-full md:w-auto invisible">
+                            {/* Spacing placeholder */}
+                            <span className="block text-[10px] font-bold text-black mb-3 tracking-wide">-</span>
+                        </div>
+                    )}
+
+                    <button
+                        onClick={() => addToCart(book, 1, selectedVariation)}
+                        className="bg-black text-gusli-bg px-12 py-5 transition-all shadow-xl hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] flex justify-center items-center gap-4 text-sm font-bold tracking-wide w-full md:w-auto rounded-full transform hover:-translate-y-1 border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D]"
+                    >
+                        <ShoppingBag size={18} />
+                        Adicionar ao carrinho
+                    </button>
                 </div>
             </div>
 
             {/* Recommendations Section */}
             {recommendations.length > 0 && (
-                <div className="pt-16 border-t border-gray-200">
-                    <h2 className="text-3xl font-extrabold text-[#12271D] mb-8 tracking-tight">Recomendações para você</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {recommendations.map(rec => (
+                <div className="pt-24 border-t border-black/20 max-w-[1600px] mx-auto px-6 md:px-12 pb-24 w-full cursor-default">
+                    <h2 className="font-sans font-bold text-4xl md:text-5xl text-black mb-16 tracking-tight">Obras Relacionadas</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                        {recommendations.map((rec) => (
                             <div
                                 key={rec.id}
-                                className="group flex flex-col bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 overflow-hidden cursor-pointer"
+                                className="group flex flex-col border border-black bg-white cursor-pointer relative"
                                 onClick={() => {
                                     navigate(`/product/${rec.id}`);
                                     window.scrollTo(0, 0);
                                 }}
                             >
-                                <div className="aspect-[2/3] bg-gray-50 p-4">
+                                <div className="relative aspect-[2/3] overflow-hidden bg-white border-b border-black">
                                     <img
                                         src={`http://localhost:3001${rec.image_path}`}
                                         alt={rec.name}
-                                        className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500 drop-shadow-md"
+                                        className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-40"
                                         onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}
                                     />
+                                    {/* Hover Overlay */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-6 text-center">
+                                        <span className="font-bold text-black text-sm tracking-widest leading-relaxed uppercase">
+                                            ver mais informações<br />acerca desta obra
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="p-4 border-t border-gray-100">
-                                    <h3 className="font-bold text-[#12271D] line-clamp-1">{rec.name}</h3>
-                                    <p className="text-sm text-gray-400">{rec.author}</p>
-                                    <p className="font-black mt-2 text-[#12271D]">R$ {rec.price.toFixed(2)}</p>
+                                <div className="flex flex-col flex-1 p-6">
+                                    <p className="text-[10px] tracking-[0.3em] font-bold text-black mb-2 uppercase">{rec.author}</p>
+                                    <h3 className="font-sans text-xl font-bold text-black leading-tight tracking-tight mb-4">{rec.name}</h3>
+                                    <p className="font-bold mt-auto border-t border-black/20 pt-4 text-sm text-black uppercase tracking-widest">R$ {rec.price.toFixed(2)}</p>
                                 </div>
                             </div>
                         ))}

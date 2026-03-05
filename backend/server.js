@@ -3,10 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./database.js');
 const path = require('path');
-const { MercadoPagoConfig, Preference } = require('mercadopago');
 
-const client = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN, options: { timeout: 5000 } });
+const nodemailer = require('nodemailer');
 
+// Removed Mercado Pago client
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -92,72 +92,7 @@ app.delete('/api/cart/:id', (req, res) => {
     });
 });
 
-app.post('/api/checkout', (req, res) => {
-    // Read cart elements
-    db.all("SELECT * FROM Cart", [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (rows.length === 0) {
-            return res.status(400).json({ error: "Cart is empty" });
-        }
-
-        db.run("DELETE FROM Cart", function (err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: "Checkout successful, cart cleared.", status: "success" });
-        });
-    });
-});
-
-app.post('/api/create_preference', async (req, res) => {
-    try {
-        const { cartItems, payerInfo } = req.body;
-
-        if (!cartItems || cartItems.length === 0) {
-            return res.status(400).json({ error: "Cart is empty" });
-        }
-
-        const items = cartItems.map(item => ({
-            id: String(item.product.id),
-            title: item.variation ? `${item.product.name} - ${item.variation}` : item.product.name,
-            quantity: Number(item.quantity),
-            unit_price: Number(item.product.price),
-            currency_id: 'BRL',
-        }));
-
-        let payer;
-        if (payerInfo) {
-            try {
-                payer = {
-                    name: payerInfo.fullName.split(' ')[0],
-                    surname: payerInfo.fullName.split(' ').slice(1).join(' '),
-                    email: payerInfo.email
-                };
-            } catch (e) {
-                console.log("Error parsing payer info, proceeding without it.");
-            }
-        }
-
-        const preference = new Preference(client);
-
-        const response = await preference.create({
-            body: {
-                items,
-                payer: payer,
-                back_urls: {
-                    success: "https://localhost:5173",
-                    failure: "https://localhost:5173",
-                    pending: "https://localhost:5173",
-                },
-                auto_return: "approved",
-            }
-        });
-
-        res.json({ id: response.id, init_point: response.init_point });
-
-    } catch (error) {
-        console.error("Error creating preference:", error);
-        res.status(500).json({ error: "Failed to create preference" });
-    }
-});
+// Old endpoints removed
 
 // SIMULATED AUTH & ACCOUNT ENDPOINTS
 app.post('/api/auth/register', (req, res) => {
@@ -207,22 +142,92 @@ app.get('/api/user/orders', (req, res) => {
     });
 });
 
-// Update checkout to save an Order if a user is logged in
-app.post('/api/checkout', (req, res) => {
-    const { userId, total, items } = req.body;
+app.post('/api/checkout', async (req, res) => {
+    const { userId, total, items, formData } = req.body;
 
-    db.run("DELETE FROM Cart", function (err) {
-        if (err) return res.status(500).json({ error: err.message });
+    if (!items || items.length === 0) {
+        return res.status(400).json({ error: "Cart is empty" });
+    }
 
-        if (userId && total) {
-            db.run("INSERT INTO Orders (user_id, total, status, items) VALUES (?, ?, ?, ?)",
-                [userId, total, 'Pago via Pix', JSON.stringify(items || [])], function (insertErr) {
-                    if (insertErr) console.error("Error saving order:", insertErr);
-                    res.json({ message: "Checkout successful, order saved, cart cleared.", status: "success" });
-                });
-        } else {
-            res.json({ message: "Checkout successful, cart cleared.", status: "success" });
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'howisitmanufactured@gmail.com',
+            pass: 'rpiqgwvmvdramnwc'
         }
+    });
+
+    let itemsHtml = '<ul>';
+    items.forEach(item => {
+        const variation = item.variation ? ` - ${item.variation}` : '';
+        itemsHtml += `<li>${item.quantity}x ${item.product.name}${variation} (R$ ${item.product.price})</li>`;
+    });
+    itemsHtml += '</ul>';
+
+    const adminMailOptions = {
+        from: 'henriquelimagusmao@gmail.com',
+        to: 'henriquelimagusmao@gmail.com',
+        subject: 'Novo Pedido Realizado - Gusli Books',
+        html: `
+            <h2>Novo Pedido Recebido</h2>
+            <h3>Dados do Cliente:</h3>
+            <p><strong>Nome:</strong> ${formData?.fullName || ''}</p>
+            <p><strong>E-mail:</strong> ${formData?.email || ''}</p>
+            <p><strong>CPF:</strong> ${formData?.cpf || ''}</p>
+            <p><strong>Celular:</strong> ${formData?.phone || ''}</p>
+            <p><strong>CEP:</strong> ${formData?.zipCode || ''}</p>
+            <p><strong>Endereço:</strong> ${formData?.street || ''}</p>
+            <p><strong>Número:</strong> ${formData?.number || ''}</p>
+            <p><strong>Complemento:</strong> ${formData?.complement || ''}</p>
+            <p><strong>Bairro:</strong> ${formData?.neighborhood || ''}</p>
+            <p><strong>Localidade:</strong> ${formData?.city || ''}</p>
+            <p><strong>Estado:</strong> ${formData?.state || ''}</p>
+            <br/>
+            <h3>Itens do Pedido (Total: R$ ${total || 0}):</h3>
+            ${itemsHtml}
+        `
+    };
+
+    const clientMailOptions = {
+        from: 'henriquelimagusmao@gmail.com',
+        to: formData?.email,
+        subject: 'Confirmação de Pedido - Gusli Books',
+        text: 'Seu pedido foi feito. Entraremos em contato para realizar o pagamento em breve. Obrigado por pedir na Gusli Books.'
+    };
+
+    try {
+        await transporter.sendMail(adminMailOptions);
+        if (formData?.email) {
+            await transporter.sendMail(clientMailOptions);
+        }
+
+        // Save order if logged in
+        if (userId && total) {
+            const orderCode = `GUSLI-${Date.now()}`; // simplified distinct code
+            db.run("INSERT INTO Orders (user_id, total, status, items, order_code) VALUES (?, ?, ?, ?, ?)",
+                [userId, total, 'Aguardando Pagamento', JSON.stringify(items), orderCode], function (insertErr) {
+                    if (insertErr) console.error("Error saving order:", insertErr);
+                });
+        }
+
+        db.run("DELETE FROM Cart", function (err) {
+            if (err) console.error("Error clearing cart backend:", err);
+            res.json({ message: "Checkout successful, emails sent, cart cleared.", status: "success" });
+        });
+    } catch (error) {
+        console.error("Error sending emails:", error);
+        res.status(500).json({ error: "Failed to process checkout emails" });
+    }
+});
+
+app.delete('/api/user/:id', (req, res) => {
+    const userId = req.params.id;
+    if (!userId) return res.status(400).json({ error: "User ID missing" });
+
+    db.run("DELETE FROM Users WHERE id = ?", [userId], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) return res.status(404).json({ error: "User not found" });
+        res.json({ message: "Account deleted successfully" });
     });
 });
 

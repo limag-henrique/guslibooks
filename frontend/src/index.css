@@ -6,10 +6,36 @@
   html {
     scroll-behavior: smooth;
   }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 10px;
+  }
 }
 
 @layer base {
   body {
-    @apply bg-gusli-bg text-gusli-highlight-2 font-sans antialiased;
+    @apply bg-gusli-bg text-gusli-highlight-2 font-sans antialiased selection:bg-gusli-highlight-1 selection:text-black;
   }
 }

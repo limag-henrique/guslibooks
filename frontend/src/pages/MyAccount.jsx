@@ -80,7 +80,7 @@ export default function MyAccount() {
     // Render Authentication Forms
     if (!user) {
         return (
-            <div className="min-h-[80vh] flex flex-col justify-center items-center py-12 px-4 bg-gray-50">
+            <div className="min-h-[80vh] flex flex-col justify-center items-center py-32 px-4 bg-white">
                 <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl border border-gray-100 w-full max-w-md animate-in fade-in zoom-in-95">
                     <div className="flex justify-center mb-8 text-[#12271D]">
                         <User size={48} strokeWidth={1} />
@@ -98,7 +98,7 @@ export default function MyAccount() {
                     <form onSubmit={handleAuthSubmit} className="flex flex-col gap-5">
                         {!isLogin && (
                             <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Nome Completo</label>
+                                <label className="block text-xs font-bold text-black uppercase tracking-widest mb-2">Nome Completo</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -111,7 +111,7 @@ export default function MyAccount() {
                         )}
 
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">E-mail</label>
+                            <label className="block text-xs font-bold text-black uppercase tracking-widest mb-2">E-mail</label>
                             <input
                                 type="email"
                                 name="email"
@@ -123,7 +123,7 @@ export default function MyAccount() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Senha</label>
+                            <label className="block text-xs font-bold text-black uppercase tracking-widest mb-2">Senha</label>
                             <input
                                 type="password"
                                 name="password"
@@ -143,7 +143,7 @@ export default function MyAccount() {
                         </button>
                     </form>
 
-                    <p className="mt-8 text-center text-sm text-gray-500 font-medium">
+                    <p className="mt-8 text-center text-sm text-black font-medium">
                         {isLogin ? 'Novo por aqui? ' : 'Já tem uma conta? '}
                         <button
                             onClick={() => setIsLogin(!isLogin)}
@@ -159,39 +159,56 @@ export default function MyAccount() {
 
     // Render Dashboard
     return (
-        <div className="max-w-[1200px] mx-auto px-4 py-12 flex flex-col md:flex-row gap-10 min-h-[70vh]">
+        <div className="max-w-[1200px] mx-auto px-4 py-32 flex flex-col md:flex-row gap-10 min-h-[70vh]">
             {/* Sidebar Navigation */}
             <aside className="w-full md:w-64 shrink-0 flex flex-col gap-2">
-                <div className="mb-8 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Logado como</p>
+                <div className="mb-8 p-4 bg-white rounded-2xl border border-gray-100">
+                    <p className="text-xs font-bold text-black uppercase tracking-widest mb-1">Logado como</p>
                     <p className="font-bold text-[#12271D] text-lg leading-tight">{user.name}</p>
                 </div>
 
                 <button
                     onClick={() => setActiveTab('profile')}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all ${activeTab === 'profile' ? 'bg-[#12271D] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-[#12271D]'
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border ${activeTab === 'profile' ? 'border-[#12271D] text-[#12271D] bg-transparent shadow-sm' : 'text-black hover:bg-white hover:text-[#12271D] border-transparent'
                         }`}
                 >
                     <User size={20} /> Meu Perfil
                 </button>
                 <button
                     onClick={() => setActiveTab('orders')}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all ${activeTab === 'orders' ? 'bg-[#12271D] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-[#12271D]'
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border ${activeTab === 'orders' ? 'border-[#12271D] text-[#12271D] bg-transparent shadow-sm' : 'text-black hover:bg-white hover:text-[#12271D] border-transparent'
                         }`}
                 >
                     <Package size={20} /> Histórico de Pedidos
                 </button>
                 <button
                     onClick={() => setActiveTab('status')}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all ${activeTab === 'status' ? 'bg-[#12271D] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50 hover:text-[#12271D]'
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-all border ${activeTab === 'status' ? 'border-[#12271D] text-[#12271D] bg-transparent shadow-sm' : 'text-black hover:bg-white hover:text-[#12271D] border-transparent'
                         }`}
                 >
                     <BookOpen size={20} /> Status dos Pedidos
                 </button>
 
                 <button
-                    onClick={handleLogout}
+                    onClick={async () => {
+                        if (window.confirm("Tem certeza que deseja apagar sua conta? Esta ação é irreversível.")) {
+                            try {
+                                await axios.delete(`http://localhost:3001/api/user/${user.id}`);
+                                handleLogout();
+                            } catch (err) {
+                                console.error("Error deleting account:", err);
+                                alert("Erro ao apagar conta.");
+                            }
+                        }
+                    }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-red-500 hover:bg-red-50 transition-all mt-auto"
+                >
+                    <LogOut size={20} /> Apagar conta
+                </button>
+
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-gray-500 hover:bg-gray-50 transition-all"
                 >
                     <LogOut size={20} /> Sair da conta
                 </button>
@@ -205,24 +222,17 @@ export default function MyAccount() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Nome Completo</label>
+                                <label className="block text-xs font-bold text-black uppercase tracking-widest mb-1">Nome Completo</label>
                                 <p className="text-xl font-medium text-[#12271D] border-b pb-2">{user.name}</p>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">E-mail</label>
+                                <label className="block text-xs font-bold text-black uppercase tracking-widest mb-1">E-mail</label>
                                 <div className="border-b pb-2 flex items-center justify-between">
                                     <p className="text-xl font-medium text-[#12271D]">{user.email}</p>
-                                    <a
-                                        href={`mailto:${user.email}`}
-                                        className="text-sm font-bold bg-[#12271D] text-white px-3 py-1 rounded-full hover:bg-black transition-colors shadow-sm"
-                                        title="Acessar E-mail"
-                                    >
-                                        Enviar E-mail
-                                    </a>
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Membro Desde</label>
+                                <label className="block text-xs font-bold text-black uppercase tracking-widest mb-1">Membro Desde</label>
                                 <p className="text-xl font-medium text-[#12271D] border-b pb-2">
                                     {user.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR') : 'Recentemente'}
                                 </p>
@@ -242,11 +252,11 @@ export default function MyAccount() {
                         ) : orders.length === 0 ? (
                             <div className="text-center py-12 flex flex-col items-center">
                                 <Package size={48} className="text-gray-200 mb-4" />
-                                <h3 className="text-xl font-bold text-gray-400 mb-2">Nenhum pedido efetuado</h3>
-                                <p className="text-gray-500 mb-6">Explore o catálogo e faça sua primeira compra!</p>
+                                <h3 className="text-xl font-bold text-black mb-2">Nenhum pedido efetuado</h3>
+                                <p className="text-black mb-6">Explore o catálogo e faça sua primeira compra!</p>
                                 <button
                                     onClick={() => navigate('/products')}
-                                    className="bg-[#12271D] text-white px-6 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:shadow-xl transition-all"
+                                    className="bg-transparent border border-[#12271D] text-[#12271D] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:shadow-xl transition-all"
                                 >
                                     Ver Catálogo
                                 </button>
@@ -259,20 +269,21 @@ export default function MyAccount() {
                                         <div key={order.id} className="border border-gray-200 rounded-2xl p-6 hover:border-[#12271D] hover:shadow-md transition-all">
                                             <div className="flex flex-wrap justify-between items-center border-b border-gray-100 pb-4 mb-4 gap-4">
                                                 <div>
-                                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Pedido #{order.id}</p>
+                                                    <p className="text-xs font-bold text-black uppercase tracking-widest mb-1">Pedido {order.order_code ? `#${order.order_code}` : `#${order.id}`}</p>
                                                     <p className="font-bold text-[#12271D]">{new Date(order.created_at).toLocaleDateString('pt-BR')}</p>
+                                                    <p className="text-xs text-black mt-1">Status: {order.status}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total</p>
+                                                    <p className="text-xs font-bold text-black uppercase tracking-widest mb-1">Total</p>
                                                     <p className="font-black text-xl text-[#12271D]">R$ {order.total.toFixed(2)}</p>
                                                 </div>
                                             </div>
 
                                             <div>
-                                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Itens Comprados</p>
+                                                <p className="text-xs font-bold text-black uppercase tracking-widest mb-3">Itens Comprados</p>
                                                 <ul className="flex flex-col gap-2">
                                                     {itemsList.map((item, idx) => (
-                                                        <li key={idx} className="flex justify-between items-center text-sm font-medium text-gray-700 bg-gray-50 p-2 rounded">
+                                                        <li key={idx} className="flex justify-between items-center text-sm font-medium text-black bg-white p-2 rounded">
                                                             <span className="truncate pr-4 flex-1">
                                                                 {item.quantity}x {item.product.name}
                                                                 {item.variation ? ` (${item.variation})` : ''}
@@ -301,16 +312,16 @@ export default function MyAccount() {
                         ) : orders.length === 0 ? (
                             <div className="text-center py-12 flex flex-col items-center">
                                 <BookOpen size={48} className="text-gray-200 mb-4" />
-                                <h3 className="text-xl font-bold text-gray-400 mb-2">Sem atualizações de status</h3>
-                                <p className="text-gray-500 mb-6">Seus acompanhamentos de envio aparecerão aqui.</p>
+                                <h3 className="text-xl font-bold text-black mb-2">Sem atualizações de status</h3>
+                                <p className="text-black mb-6">Seus acompanhamentos de envio aparecerão aqui.</p>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-6">
                                 {orders.map(order => (
-                                    <div key={order.id} className="border border-gray-200 rounded-2xl p-6 bg-gray-50">
+                                    <div key={order.id} className="border border-gray-200 rounded-2xl p-6 bg-white">
                                         <div className="flex justify-between items-center mb-4">
                                             <p className="text-sm font-bold text-[#12271D]">Pedido #{order.id}</p>
-                                            <span className="bg-[#12271D] text-white px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-md">
+                                            <span className="bg-[#12271D] text-black px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-md">
                                                 {order.status}
                                             </span>
                                         </div>
@@ -319,12 +330,12 @@ export default function MyAccount() {
                                             <div className="relative">
                                                 <div className="absolute -left-[21px] top-1 w-3 h-3 bg-[#12271D] rounded-full ring-4 ring-white"></div>
                                                 <p className="text-sm font-bold text-gray-800">Pagamento Aprovado</p>
-                                                <p className="text-xs text-gray-500">{new Date(order.created_at).toLocaleString('pt-BR')}</p>
+                                                <p className="text-xs text-black">{new Date(order.created_at).toLocaleString('pt-BR')}</p>
                                             </div>
                                             <div className="relative opacity-50">
                                                 <div className="absolute -left-[21px] top-1 w-3 h-3 bg-gray-300 rounded-full ring-4 ring-white"></div>
-                                                <p className="text-sm font-bold text-gray-500">Preparando Pacote</p>
-                                                <p className="text-xs text-gray-400">Aguardando atualização</p>
+                                                <p className="text-sm font-bold text-black">Preparando Pacote</p>
+                                                <p className="text-xs text-black">Aguardando atualização</p>
                                             </div>
                                         </div>
                                     </div>

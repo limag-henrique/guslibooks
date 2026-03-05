@@ -25,10 +25,14 @@ export default function Checkout() {
 
     if (cartItems.length === 0) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gusli-bg mt-20 px-4">
-                <h2 className="text-2xl font-bold text-gusli-highlight-2 mb-4">Seu carrinho está vazio.</h2>
-                <button onClick={() => navigate('/products')} className="text-blue-600 hover:underline">
-                    Voltar para a loja
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gusli-bg  group/page">
+
+                <h2 className="font-display text-5xl md:text-7xl text-black mb-8 uppercase tracking-tighter">O arquivo está vazio.</h2>
+                <button
+                    onClick={() => navigate('/products')}
+                    className="text-black uppercase tracking-[0.3em] font-bold text-xs hover:text-black transition-colors  border-b border-black/30 pb-1"
+                >
+                    [ Retornar ao Acervo ]
                 </button>
             </div>
         );
@@ -62,6 +66,7 @@ export default function Checkout() {
                     toast.error("CEP não encontrado.");
                 }
             } catch (err) {
+                console.error("CEP error:", err);
                 toast.error("Erro ao buscar integração com os Correios.");
             }
         }
@@ -69,9 +74,21 @@ export default function Checkout() {
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const isValidCPF = (cpf) => {
-        const cleanCPF = cpf.replace(/\D/g, '');
-        return cleanCPF.length === 11;
+    const isValidCPF = (cpfEntrada) => {
+        const cpfLimpo = cpfEntrada.replace(/[^\d]+/g, '');
+        if (cpfLimpo.length !== 11 || /^(\d)\1+$/.test(cpfLimpo)) return false;
+        let soma = 0;
+        let resto;
+        for (let i = 1; i <= 9; i++) soma = soma + parseInt(cpfLimpo.substring(i - 1, i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpfLimpo.substring(9, 10))) return false;
+        soma = 0;
+        for (let i = 1; i <= 10; i++) soma = soma + parseInt(cpfLimpo.substring(i - 1, i)) * (12 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpfLimpo.substring(10, 11))) return false;
+        return true;
     };
 
     const handleProcessCheckout = async (e) => {
@@ -99,140 +116,177 @@ export default function Checkout() {
             // Save data locally if needed or attach to user
             localStorage.setItem('gusli_checkout_info', JSON.stringify(formData));
 
-            // Create Preference directly
-            const prefRes = await axios.post('http://localhost:3001/api/create_preference', {
-                cartItems,
-                payerInfo: formData
-            });
-            if (prefRes.data.init_point) {
-                // Redirect user to Mercado Pago to finalize payment
-                window.location.href = prefRes.data.init_point;
-                return;
-            }
-        } catch (error) {
-            console.error("Mercado Pago checkout error:", error);
-            toast.error("Processando via sistema de fallback seguro...", { duration: 4000 });
-
-            // Fallback: Finalize order on backend if MP fails
             const storedUser = localStorage.getItem('gusli_user');
             const user = storedUser ? JSON.parse(storedUser) : null;
 
             await axios.post('http://localhost:3001/api/checkout', {
                 userId: user ? user.id : null,
                 total: cartTotal,
-                items: cartItems
+                items: cartItems,
+                formData: formData
             });
 
             clearCart();
-            navigate('/account'); // Send to their account or success page
+            navigate('/success');
+        } catch (error) {
+            console.error("Checkout error:", error);
+            toast.error("Erro ao processar o seu pedido. Tente novamente mais tarde.");
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gusli-bg py-24 px-4 sm:px-6 lg:px-8 mt-16">
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-12">
+        <div className="min-h-screen bg-gusli-bg pt-32 pb-24 px-6 md:px-12  group/page flex flex-col items-center">
 
-                {/* Left Form Section */}
-                <div className="flex-1 bg-white p-8 rounded-3xl shadow-xl border border-gusli-highlight-1">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors">
+            <div className="w-full max-w-[1600px] flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
+
+                {/* Left Form Section (Editorial) */}
+                <div className="flex-1">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-4 text-black hover:text-black mb-12 transition-colors font-bold uppercase text-[10px] tracking-[0.3em] "
+                    >
                         <ArrowLeft size={16} /> Voltar
                     </button>
 
-                    <h1 className="text-3xl font-extrabold text-gusli-highlight-2 mb-2">Finalizar Pedido</h1>
-                    <p className="text-gray-500 mb-8 font-medium">Preencha seus dados para entrega e cobrança.</p>
+                    <h1 className="font-display text-6xl md:text-8xl text-black uppercase tracking-tighter leading-none mb-4">Checkout</h1>
+                    <p className="text-black text-xs uppercase tracking-[0.3em] font-bold mb-16 border-b border-black/20 pb-12">
+                        Autorização de Envio e Transação
+                    </p>
 
-                    <form onSubmit={handleProcessCheckout} className="space-y-6">
-                        <div className="grid grid-cols-1 gap-6">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Nome Completo *</label>
-                                <input required type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="João da Silva" />
+                    <form onSubmit={handleProcessCheckout} className="space-y-12 max-w-2xl">
+                        <div className="flex flex-col gap-10">
+                            {/* Identificação */}
+                            <div className="space-y-8 border-b border-black/10 pb-12">
+                                <h3 className="font-display text-2xl text-black uppercase tracking-widest">Identificação</h3>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Nome *</label>
+                                    <input required type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Primeiro e Último Nome" />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">E-mail *</label>
+                                        <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="contato@servidor.com" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Cadastro (CPF) *</label>
+                                        <input required type="text" name="cpf" value={formData.cpf} onChange={handleChange} maxLength="14" className={`w-full bg-transparent border-b py-4 text-xl font-medium focus:outline-none transition-colors placeholder-black/50 ${formData.cpf.length >= 11 ? (isValidCPF(formData.cpf) ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600') : 'border-black/30 text-black'}`} placeholder="000.000.000-00" />
+                                        {formData.cpf.length >= 11 && (
+                                            <p className={`text-[10px] font-bold mt-1 uppercase ${isValidCPF(formData.cpf) ? 'text-green-600' : 'text-red-500'}`}>
+                                                {isValidCPF(formData.cpf) ? 'CPF Válido!' : 'CPF Inválido!'}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Celular (WhatsApp de preferência)</label>
+                                    <input type="text" name="phone" value={formData.phone || ''} onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (/^[0-9()+\-#*]*$/.test(val)) {
+                                            setFormData({ ...formData, phone: val });
+                                        }
+                                    }} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="De preferência, que seja WhatsApp" />
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">E-mail *</label>
-                                    <input required type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="joao@email.com" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">CPF *</label>
-                                    <input required type="text" name="cpf" value={formData.cpf} onChange={handleChange} maxLength="14" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="000.000.000-00" />
-                                </div>
-                            </div>
+                            {/* Entrega */}
+                            <div className="space-y-8">
+                                <h3 className="font-display text-2xl text-black uppercase tracking-widest">Destino</h3>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">CEP *</label>
-                                    <input required type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} onBlur={handleZipCodeBlur} maxLength="9" className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="00000-000" />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">CEP *</label>
+                                        <input required type="text" name="zipCode" value={formData.zipCode} onChange={handleChange} onBlur={handleZipCodeBlur} maxLength="9" className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="00000-000" />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Logradouro *</label>
+                                        <input required type="text" name="street" value={formData.street} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Avenida ou Rua" />
+                                    </div>
                                 </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Logradouro / Rua *</label>
-                                    <input required type="text" name="street" value={formData.street} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="Rua / Avenida" />
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Número *</label>
-                                    <input required type="text" name="number" value={formData.number} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="123" />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Número *</label>
+                                        <input required type="text" name="number" value={formData.number} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="123" />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Complemento / Local</label>
+                                        <input type="text" name="complement" value={formData.complement} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Opcional" />
+                                    </div>
                                 </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Complemento</label>
-                                    <input type="text" name="complement" value={formData.complement} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="Apto 4, Bloco B (Opcional)" />
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Bairro *</label>
-                                    <input required type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="Bairro" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Cidade *</label>
-                                    <input required type="text" name="city" value={formData.city} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="Cidade" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Estado *</label>
-                                    <input required type="text" name="state" value={formData.state} onChange={handleChange} className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition-all" placeholder="UF" />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Bairro *</label>
+                                        <input required type="text" name="neighborhood" value={formData.neighborhood} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Seu Bairro" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Localidade *</label>
+                                        <input required type="text" name="city" value={formData.city} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Cidade" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Estado *</label>
+                                        <input required type="text" name="state" value={formData.state} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="UF" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="pt-8 mt-8 border-t border-gray-100">
+                        <div className="pt-16 mt-16 border-t border-black/20 hidden md:block">
+                            {/* Desktop Button Location */}
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-[#12271D] text-white py-5 rounded-xl font-black text-lg hover:bg-black hover:scale-[1.01] transform transition-all shadow-xl flex justify-center items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest"
+                                className="w-full bg-black text-gusli-bg py-8 font-sans text-4xl font-bold flex justify-center items-center gap-6 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
                             >
-                                {isLoading ? 'Processando Conexão...' : 'Ir para Pagamento'}
-                                {!isLoading && <ArrowRight size={20} />}
+                                {isLoading ? 'Processando...' : 'Concluir Pedido'}
+                                {!isLoading && <ArrowRight size={32} className="group-hover:translate-x-4 transition-transform" />}
                             </button>
-                            <div className="flex items-center justify-center gap-2 mt-4 text-gray-400 text-sm">
-                                <ShieldCheck size={16} /> Pagamento seguro e encriptado via Mercado Pago
-                            </div>
                         </div>
                     </form>
                 </div>
 
-                {/* Right Summary Section */}
-                <div className="w-full md:w-80 flex flex-col gap-6">
-                    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gusli-highlight-1 sticky top-32">
-                        <h3 className="font-bold text-lg text-gusli-highlight-2 mb-4 pb-4 border-b border-gray-100">Resumo do Pedido</h3>
+                {/* Right Summary Section (Sticky Editorial) */}
+                <div className="w-full lg:w-[450px] shrink-0">
+                    <div className="sticky top-32 flex flex-col gap-10">
+                        <div className="border border-black/20 bg-gusli-green text-black p-10">
+                            <h3 className="font-sans font-bold text-2xl text-white mb-8 tracking-tight border-b border-black/20 pb-6 uppercase">Revisão do Pedido</h3>
 
-                        <div className="flex flex-col gap-4 mb-6">
-                            {cartItems.map((item, idx) => (
-                                <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-gray-600 line-clamp-1 max-w-[60%]">{item.quantity}x {item.product.name}</span>
-                                    <span className="font-medium text-black">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
+                            <div className="flex flex-col gap-6 mb-12">
+                                {cartItems.map((item, idx) => (
+                                    <div key={idx} className="flex justify-between items-start gap-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-white font-bold uppercase tracking-widest text-xs">{item.product.name}</span>
+                                            <span className="text-white text-[10px] uppercase font-bold tracking-[0.3em] mt-1">{item.quantity} Uni.</span>
+                                        </div>
+                                        <span className="font-display text-lg text-white whitespace-nowrap">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="pt-8 border-t border-black/20 flex flex-col gap-2">
+                                <div className="flex justify-between items-end">
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-[0.4em]">Soma Parcial</span>
+                                    <span className="font-display text-4xl text-white">R$ {cartTotal.toFixed(2)}</span>
                                 </div>
-                            ))}
+                            </div>
                         </div>
 
-                        <div className="pt-4 border-t border-gray-100 flex justify-between items-center bg-gray-50 p-4 rounded-xl">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Total</span>
-                            <span className="text-xl font-black text-[#12271D]">R$ {cartTotal.toFixed(2)}</span>
+                        {/* Mobile Button Location (Sticky Bottom) */}
+                        <div className="md:hidden sticky, bottom-0 bg-gusli-bg pt-4 pb-8 z-50 border-t border-black/20">
+                            <button
+                                onClick={handleProcessCheckout}
+                                disabled={isLoading}
+                                className="w-full bg-black text-gusli-bg py-5 font-sans font-bold text-2xl flex justify-center items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
+                            >
+                                {isLoading ? 'Aguarde' : 'Concluir Pedido'}
+                                {!isLoading && <ArrowRight size={24} />}
+                            </button>
                         </div>
+
                     </div>
                 </div>
 

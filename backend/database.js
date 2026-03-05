@@ -43,6 +43,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 total REAL NOT NULL,
                 status TEXT DEFAULT 'Pending',
                 items TEXT NOT NULL,
+                order_code TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES Users(id)
             )`);

@@ -1,0 +1,26 @@
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\components\CartModal.jsx
+  Line 6: 'axios' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 7: 'toast' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 10: 'setPreferenceId' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 11: 'clearCart' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 11: 'fetchCart' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\components\Header.jsx
+  Line 11: 'scrolled' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 11: 'setScrolled' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\context\CartContext.jsx
+  Line 3: 'axios' is defined but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 60: 'err' is defined but never used.
+  Line 69: 'err' is defined but never used.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\pages\Checkout.jsx
+  Line 68: 'err' is defined but never used.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\pages\Home.jsx
+  Line 13: 'mousePos' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 15: 'buttonPos' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 45: 'handleMagneticMove' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 59: 'handleMagneticLeave' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 104: 'idx' is defined but never used.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\pages\ProductDetails.jsx
+  Line 170: 'idx' is defined but never used.
+FILE: C:\Users\Henrique Lima\Desktop\dti\frontend\src\pages\Products.jsx
+  Line 40: 'fetchErr' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u.
+  Line 207: 'idx' is defined but never used.

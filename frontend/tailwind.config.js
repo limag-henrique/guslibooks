@@ -7,7 +7,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Roboto', 'sans-serif'],
+                sans: ['"DM Sans"', 'sans-serif'],
+                display: ['"DM Sans"', 'sans-serif'],
             },
             keyframes: {
                 marquee: {
@@ -19,9 +20,11 @@ export default {
                 marquee: 'marquee 50s linear infinite',
             },
             colors: {
-                'gusli-bg': '#FFFFFF',
-                'gusli-highlight-1': '#F3F4F6', // Lighter gray for pure white contrast
-                'gusli-highlight-2': '#12271D', // Dark Green
+                'gusli-bg': '#FFFDF5',
+                'gusli-secondary': '#FFFFFF',
+                'gusli-highlight-1': '#DFDAC6',
+                'gusli-highlight-2': '#000000',
+                'gusli-green': '#12271D',
             },
         },
     },

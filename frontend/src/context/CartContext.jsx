@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import axios from 'axios';
 
 const CartContext = createContext();
 
@@ -57,7 +56,7 @@ export const CartProvider = ({ children }) => {
             setCartItems(cartItems.map(item =>
                 (item.product.id === productId && (item.variation === variation || (!item.variation && !variation))) ? { ...item, quantity: newQuantity } : item
             ));
-        } catch (err) {
+        } catch {
             toast.error('Falha ao atualizar quantidade.');
         }
     };
@@ -66,7 +65,7 @@ export const CartProvider = ({ children }) => {
         try {
             setCartItems(cartItems.filter(item => !(item.product.id === productId && (item.variation === variation || (!item.variation && !variation)))));
             toast.success('Produto removido da sacola.');
-        } catch (err) {
+        } catch {
             toast.error('Falha ao remover produto.');
         }
     };
