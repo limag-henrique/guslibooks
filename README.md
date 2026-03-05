@@ -1,17 +1,17 @@
-# GUSLI Books - E-commerce
+# Gusli Books
 
 > [!NOTE]  
-> Este repositório contém o código-fonte (Frontend e Backend) para o projeto e-commerce **GUSLI Books**. Siga as instruções abaixo para rodar o projeto localmente na sua máquina.
+> Olá! Seja bem-vindo ao repositório do Gusli Books! Esse projeto foi interamente gerado por inteligência artificial, utilizando o Antigravity, do Google, dada à falta de conhecimento técnico. O tempo necessário para finalização, ajustes e testes foi de aproximadamente 12 horas. Os prompts foram formulados à partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando na página:   
 
 ## Pré-requisitos
 
 Certifique-se de que você possui as seguintes ferramentas instaladas:
-- **Node.js**: (versão 18 ou superior)
-- **npm** (gerenciador de pacotes do Node)
+- **Node.js**: (versão 18 ou superior --> Para verificar, digite node -v)
+- **npm**: (gerenciador de pacotes do Node --> Para verificar, digite npm -v)
 
 ---
 
-## ⚙️ Backend
+## Backend
 
 O backend é construído em Node.js usando Express, e utiliza o SQLite como banco de dados.
 
@@ -40,7 +40,7 @@ O backend é construído em Node.js usando Express, e utiliza o SQLite como banc
 
 ---
 
-## 🖥️ Frontend
+## Frontend
 
 O frontend é construído com React e Vite, estilizado com Tailwind CSS. 
 
@@ -65,9 +65,7 @@ O frontend é construído com React e Vite, estilizado com Tailwind CSS.
 
 ---
 
-## 📚 Documentação da API (Backend)
-
-O backend da Gusli Books foi projetado para ser leve, rápido e direto ao ponto, utilizando o **Express.js** e o **SQLite** para persistência de dados. Toda a regra de negócios e conexão com banco de dados está concentrada no arquivo `server.js`.
+## Documentação da API (Backend)
 
 ### Principais Arquivos
 - **`server.js`**: Ponto de entrada do backend. Escuta na porta `3001`, configura o CORS, define o transporte de e-mails (Nodemailer) e estabelece todas as rotas (Endpoints) da API.
