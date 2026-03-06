@@ -26,6 +26,21 @@ export default function Checkout() {
         state: ''
     });
 
+    const [buyerType, setBuyerType] = useState('other');
+
+    const handleBuyerTypeChange = (type) => {
+        setBuyerType(type);
+        if (type === 'me') {
+            const storedUser = localStorage.getItem('gusli_user');
+            const user = storedUser ? JSON.parse(storedUser) : null;
+            if (user) {
+                setFormData(prev => ({ ...prev, fullName: user.name || '', email: user.email || '' }));
+            }
+        } else {
+            setFormData(prev => ({ ...prev, fullName: '', email: '' }));
+        }
+    };
+
     if (cartItems.length === 0) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-gusli-bg  group/page">
@@ -164,6 +179,25 @@ export default function Checkout() {
                             <div className="space-y-8 border-b border-black/10 pb-12">
                                 <h3 className="font-display text-2xl text-black uppercase tracking-widest">Identificação</h3>
 
+                                {isLoggedIn && (
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleBuyerTypeChange('me')}
+                                            className={`flex-1 py-4 px-4 border ${buyerType === 'me' ? 'bg-[#12271D] text-white border-[#12271D]' : 'bg-transparent text-black border-black/30 hover:border-black'} font-bold uppercase tracking-widest text-[10px] transition-colors`}
+                                        >
+                                            Essa compra é para mim
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleBuyerTypeChange('other')}
+                                            className={`flex-1 py-4 px-4 border ${buyerType === 'other' ? 'bg-[#12271D] text-white border-[#12271D]' : 'bg-transparent text-black border-black/30 hover:border-black'} font-bold uppercase tracking-widest text-[10px] transition-colors`}
+                                        >
+                                            Essa compra é para outra pessoa
+                                        </button>
+                                    </div>
+                                )}
+
                                 <div>
                                     <label className="block text-[10px] font-bold text-black mb-2 uppercase tracking-[0.3em]">Nome *</label>
                                     <input required type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full bg-transparent border-b border-black/30 py-4 text-xl font-medium text-black focus:outline-none focus:border-white transition-colors  placeholder-black/50" placeholder="Primeiro e Último Nome" />
@@ -268,6 +302,9 @@ export default function Checkout() {
                                                 lineHeight: '1.6',
                                             },
                                         });
+                                        setTimeout(() => {
+                                            navigate('/account');
+                                        }, 1000);
                                     }}
                                 >
                                     Concluir Pedido
@@ -356,6 +393,9 @@ export default function Checkout() {
                                                 lineHeight: '1.6',
                                             },
                                         });
+                                        setTimeout(() => {
+                                            navigate('/account');
+                                        }, 1000);
                                     }}
                                 >
                                     Concluir Pedido

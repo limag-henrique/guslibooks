@@ -157,6 +157,10 @@ export default function CartModal() {
                                                 lineHeight: '1.6',
                                             },
                                         });
+                                        setTimeout(() => {
+                                            setIsCartOpen(false);
+                                            navigate('/account');
+                                        }, 1000);
                                     }}
                                 >
                                     Revisar &amp; Pagar Pedido
