@@ -1,7 +1,11 @@
 # Gusli Books
 
 > [!NOTE]  
-> Olá! Seja bem-vindo ao repositório do Gusli Books! Esse projeto foi interamente gerado por inteligência artificial, utilizando o Antigravity, do Google, dada à falta de conhecimento técnico. O tempo necessário para finalização, ajustes e testes foi de aproximadamente 12 horas. Os prompts foram formulados à partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando na página:   
+> Olá! Seja bem-vindo ao repositório do Gusli Books!
+
+Este projeto foi inteiramente gerado por inteligência artificial (Antigravity, do Google), dada a minha falta de conhecimento técnico para codificá-lo do zero. O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 13 horas.
+
+Os prompts foram formulados a partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando e deixei uma mensagem especial para você, avaliador, na página: [dti_prompts](https://limag-henrique.github.io/dti_prompts/).
 
 ## Pré-requisitos
 
@@ -112,10 +116,8 @@ O frontend é construído com React e Vite, estilizado com Tailwind CSS.
 
 ---
 
-## 📌 Premissas Consideradas do Projeto
+## Premissas
 
-Durante a concepção e o desenvolvimento da **Gusli Books**, as seguintes premissas de negócio e design foram adotadas:
-
-1. **Jornada de Descoberta:** O foco absoluto da Gusli Books é **divulgar** obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (ex: botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista) e **não** funciona como um catálogo predatório e direto aos moldes da Amazon, onde o usuário apenas procura um livro com intenção prévia de compra.
-2. **Pagamento Manual:** Para o Proof-of-Concept, a loja não possui gateways de pagamentos diretos (como Stripe ou cartões de crédito integrados). O pagamento será arranjado de forma estritamente **manual**. O sistema captura a intenção de compra, cadastra o pedido, notifica a gerência por e-mail e informa virtualmente ao usuário que o time da Gusli entrará em contato com ele em breve com as faturas.
-3. **Cálculos de Frete:** O frete e a logística de entrega não são contabilizados no total do carrinho no frontend atualmente. Todas as questões logísticas serão discutidas e acertadas diretamente pela equipe aos moldes do processo de Pagamento Manual após a emissão do pedido.
+1. O foco divulgar as obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (materializado pelo botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista) 
+2. Para o Proof-of-Concept, a loja não possui gateways de pagamentos diretos. O sistema captura a intenção de compra, cadastra o pedido, notifica a gerência por e-mail e informa virtualmente ao usuário que a equipe da Gusli entrará em contato com ele em breve com as faturas.
+3. O frete e a logística de entrega não são contabilizados no total do carrinho. 
