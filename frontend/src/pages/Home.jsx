@@ -7,6 +7,7 @@ import { API_URL } from '../config';
 
 export default function Home() {
     const [randomBooks, setRandomBooks] = useState([]);
+    const [openFaq, setOpenFaq] = useState(null);
     const [allGenres, setAllGenres] = useState([]);
     const { addToCart } = useCart();
     const [loading, setLoading] = useState(true);
@@ -56,8 +57,23 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Scrolling Genre Marquee */}
+            <div className="w-full bg-gusli-bg py-5 overflow-hidden">
+                <div className="flex w-max animate-marquee gap-12">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="flex-shrink-0 flex items-center gap-12">
+                            {["Fantasia", "Ficção", "Graphic Novel", "Romance", "Terror", "Thriller Psicológico"].map(g => (
+                                <span key={g} className="font-sans font-black text-xl text-black tracking-[0.2em] uppercase whitespace-nowrap">
+                                    {g} <span className="text-gusli-green mx-3">•</span>
+                                </span>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Environmental Impact Section */}
-            <section className="bg-gusli-bg py-32 px-6 max-w-[1600px] mx-auto w-full border-b border-black/10">
+            <section className="bg-gusli-bg py-16 px-6 max-w-[1600px] mx-auto w-full border-b border-black/10">
                 <div className="max-w-[1200px] mx-auto">
                     <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-[#12271D] text-center tracking-tight mb-16">
                         O que você também compra com seu livro?
@@ -173,20 +189,96 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Scrolling Genre Marquee */}
-            <div className="w-full bg-gusli-bg py-5 overflow-hidden">
-                <div className="flex w-max animate-marquee gap-12">
-                    {[...Array(6)].map((_, i) => (
-                        <div key={i} className="flex-shrink-0 flex items-center gap-12">
-                            {["Fantasia", "Ficção", "Graphic Novel", "Romance", "Terror", "Thriller Psicológico"].map(g => (
-                                <span key={g} className="font-sans font-black text-xl text-black tracking-[0.2em] uppercase whitespace-nowrap">
-                                    {g} <span className="text-gusli-green mx-3">•</span>
-                                </span>
-                            ))}
-                        </div>
-                    ))}
+
+
+            {/* FAQ Section */}
+            <section className="py-24 px-6 max-w-[1600px] mx-auto w-full">
+                <div className="max-w-[860px] mx-auto">
+                    <h2 className="font-sans font-bold text-4xl md:text-5xl text-[#12271D] tracking-tight mb-4 text-center">
+                        Dúvidas Frequentes
+                    </h2>
+                    <p className="text-center text-black/50 text-base mb-12">Tudo o que você precisa saber antes de fazer o seu pedido.</p>
+
+                    <div className="flex flex-col gap-3">
+                        {[
+                            {
+                                q: "Como realizo o pagamento após enviar o pedido?",
+                                a: "A nossa equipe entrará brevemente em contato para confirmar a disponibilidade do material e o prazo de entrega o mais rápido possível através dos meios de contato cadastrados."
+                            },
+                            {
+                                q: "Se não gostar do livro, posso devolver?",
+                                a: "Como esse é um material impresso por demanda, se categoriza como um personalizado e devoluções não podem ser feitas."
+                            },
+                            {
+                                q: "Qual é o prazo de entrega em média?",
+                                a: "Nossos prazos de entrega variam conforme as demandas dos nossos clientes e ainda nossas disponibilidades por fornecedores. Da realização do pedido até você estar lendo sua obra preferida, geralmente leva um tempo de sete dias úteis."
+                            },
+                            {
+                                q: "Posso sugerir outros livros para o site?",
+                                a: "Sim, entre em contato com nossos meios de contato ou visite a sede corporativa para informarmos autores locais, internacionais ou regionais, que podem ser grandes aquisições ao nosso time de royalties."
+                            },
+                            {
+                                q: "O que posso fazer depois de terminar de ler o meu livro?",
+                                a: "Depois que terminar de ler o seu livro, recomendamos fortemente que reutilize, utilize nossas páginas para alguma coisa produtiva ou elaboração gráfica, ou partilhe com seus amigos e colegas a sua leitura da vez. Acreditamos fundamentalmente que a forma mais fácil de não poluir é não produzir o que não é necessário. Portanto, divida o que você já tem."
+                            },
+                            {
+                                q: "Vocês utilizam plástico em algumas das etapas de procedimento?",
+                                a: "Não! Todas as etapas da nossa empresa são plástico-free. Inclusive, a nossa embalagem é feita de material reciclável e se decompõe na natureza em apenas três meses."
+                            },
+                            {
+                                q: "Posso acompanhar o rastreio do meu pedido?",
+                                a: "Sim! Assim que o seu livro for impresso e despachado, enviaremos um código de rastreamento para o seu e-mail cadastrado. Você poderá acompanhar cada etapa da entrega até a sua casa."
+                            },
+                            {
+                                q: "Vocês vendem e-books ou apenas livros físicos?",
+                                a: "Atualmente, nosso foco é 100% na experiência tátil e sustentável dos livros físicos impressos sob demanda. Por acreditarmos na magia do papel e no compartilhamento físico das obras, não comercializamos versões digitais."
+                            },
+                            {
+                                q: "É possível alterar o endereço de entrega após fechar o pedido?",
+                                a: "Caso o seu pedido ainda não tenha entrado em fase de produção gráfica, você pode solicitar a alteração entrando em contato rapidamente com o nosso suporte pelos canais de atendimento."
+                            },
+                        ].map((item, idx) => {
+                            const isOpen = openFaq === idx;
+                            return (
+                                <div
+                                    key={idx}
+                                    className="border border-black/10 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+                                >
+                                    <button
+                                        onClick={() => setOpenFaq(isOpen ? null : idx)}
+                                        className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 group"
+                                        aria-expanded={isOpen}
+                                    >
+                                        <span className="font-semibold text-[#12271D] text-base leading-snug">
+                                            {item.q}
+                                        </span>
+                                        <span
+                                            className="flex-shrink-0 w-7 h-7 rounded-full border border-[#12271D]/20 flex items-center justify-center text-[#12271D] transition-transform duration-300"
+                                            style={{ transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)' }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M7 1V13M1 7H13" stroke="#12271D" strokeWidth="2" strokeLinecap="round" />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                    <div
+                                        style={{
+                                            maxHeight: isOpen ? '400px' : '0px',
+                                            opacity: isOpen ? 1 : 0,
+                                            transition: 'max-height 0.35s ease, opacity 0.25s ease',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <p className="px-6 pb-6 text-black text-sm leading-relaxed font-normal">
+                                            {item.a}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     );
 }

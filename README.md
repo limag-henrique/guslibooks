@@ -1,13 +1,25 @@
 # Gusli Books
 
-> [!NOTE]  
-> Olá! Seja bem-vindo ao repositório do Gusli Books!
+Olá! Seja bem-vindo ao repositório do Gusli Books!
 
 Este projeto foi inteiramente gerado por inteligência artificial (Antigravity, do Google), dada a minha falta de conhecimento técnico para codificá-lo do zero. O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 14 horas.
 
 Os prompts foram formulados a partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando e deixei uma mensagem especial para você, avaliador, na página: [dti_prompts](https://limag-henrique.github.io/dti_prompts/).
 
 Por curiosidade, os 65 livros são livros que li/estou lendo/lerei, então considere-os como uma possível sugestão de leitura real ;)
+
+## Obter o Projeto
+
+Antes de tudo, você precisa ter os arquivos do projeto na sua máquina. Existem duas formas:
+
+- **Download do ZIP:** Acesse o repositório no GitHub, clique em **Code → Download ZIP** e extraia o conteúdo em uma pasta de sua preferência.
+- **Via branch do GitHub:** Se preferir, clone o repositório ou trabalhe diretamente a partir de uma branch existente:
+  ```bash
+  git clone https://github.com/limag-henrique/dti.git
+  cd dti
+  ```
+
+---
 
 ## Pré-requisitos
 
@@ -122,6 +134,6 @@ O frontend é construído com React e Vite, estilizado com Tailwind CSS.
 
 ## Premissas
 
-1. O foco divulgar as obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (materializado pelo botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista) 
+1. O foco é divulgar as obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (materializado pelo botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista)
 2. Para o Proof-of-Concept, a loja não possui gateways de pagamentos diretos. O sistema captura a intenção de compra, cadastra o pedido, notifica a gerência por e-mail e informa virtualmente ao usuário que a equipe da Gusli entrará em contato com ele em breve com as faturas.
-3. O frete e a logística de entrega não são contabilizados no total do carrinho. 
+3. O frete não é contabilizado no total do carrinho. 

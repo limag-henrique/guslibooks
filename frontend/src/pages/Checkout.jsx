@@ -7,9 +7,11 @@ import { ShieldCheck, ArrowLeft, ArrowRight } from 'lucide-react';
 import { API_URL } from '../config';
 
 export default function Checkout() {
-    const { cartItems, cartTotal, clearCart } = useCart();
+    const { cartItems, cartTotal, cartSubtotal, totalCartQuantity, hasDiscount, clearCart } = useCart();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [shaking, setShaking] = useState(false);
+    const isLoggedIn = !!localStorage.getItem('gusli_user');
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -237,15 +239,41 @@ export default function Checkout() {
                         </div>
 
                         <div className="pt-16 mt-16 border-t border-black/20 hidden md:block">
-                            {/* Desktop Button Location */}
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full bg-black text-gusli-bg py-8 font-sans text-4xl font-bold flex justify-center items-center gap-6 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
-                            >
-                                {isLoading ? 'Processando...' : 'Concluir Pedido'}
-                                {!isLoading && <ArrowRight size={32} className="group-hover:translate-x-4 transition-transform" />}
-                            </button>
+                            {/* Desktop Button */}
+                            {isLoggedIn ? (
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full bg-black text-gusli-bg py-8 font-sans text-4xl font-bold flex justify-center items-center gap-6 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
+                                >
+                                    {isLoading ? 'Processando...' : 'Concluir Pedido'}
+                                    {!isLoading && <ArrowRight size={32} />}
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className={`w-full bg-gray-400 text-white/70 py-8 font-sans text-4xl font-bold flex justify-center items-center gap-6 tracking-tight border border-transparent rounded-full cursor-not-allowed select-none ${shaking ? 'animate-shake' : ''}`}
+                                    onClick={() => {
+                                        setShaking(true);
+                                        setTimeout(() => setShaking(false), 500);
+                                        toast('Você precisa ter uma conta para continuar com este pedido. 🔐\nCrie a sua ou faça login — é rápido!', {
+                                            duration: 5000,
+                                            icon: '👤',
+                                            style: {
+                                                borderRadius: '12px',
+                                                background: '#12271D',
+                                                color: '#fff',
+                                                fontSize: '14px',
+                                                padding: '14px 18px',
+                                                lineHeight: '1.6',
+                                            },
+                                        });
+                                    }}
+                                >
+                                    Concluir Pedido
+                                    <ArrowRight size={32} />
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>
@@ -261,31 +289,79 @@ export default function Checkout() {
                                     <div key={idx} className="flex justify-between items-start gap-4">
                                         <div className="flex flex-col">
                                             <span className="text-white font-bold uppercase tracking-widest text-xs">{item.product.name}</span>
-                                            <span className="text-white text-[10px] uppercase font-bold tracking-[0.3em] mt-1">{item.quantity} Uni.</span>
+                                            <span className="text-white text-[10px] uppercase font-bold tracking-[0.3em] mt-1">{item.quantity} Uni. · R$ {item.product.price.toFixed(2)}/un.</span>
                                         </div>
                                         <span className="font-display text-lg text-white whitespace-nowrap">R$ {(item.product.price * item.quantity).toFixed(2)}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="pt-8 border-t border-black/20 flex flex-col gap-2">
+                            {/* Upsell banner – shown when 1-4 items */}
+                            {totalCartQuantity >= 1 && totalCartQuantity <= 4 && (
+                                <div className="flex items-start gap-3 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 mb-6">
+                                    <span className="text-xl">🎁</span>
+                                    <p className="text-amber-800 text-xs font-semibold leading-snug">
+                                        Adicione mais <strong>{5 - totalCartQuantity} {5 - totalCartQuantity === 1 ? 'livro' : 'livros'}</strong> ao carrinho e ganhe <strong>7% de desconto</strong> no total!
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="pt-8 border-t border-black/20 flex flex-col gap-3">
+                                {hasDiscount && (
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-bold text-white/70 uppercase tracking-[0.3em]">Subtotal</span>
+                                        <span className="text-white/60 line-through text-sm">R$ {cartSubtotal.toFixed(2)}</span>
+                                    </div>
+                                )}
+                                {hasDiscount && (
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] font-bold text-green-300 uppercase tracking-[0.3em]">🎉 Desconto 7%</span>
+                                        <span className="text-green-300 font-bold text-sm">-R$ {(cartSubtotal - cartTotal).toFixed(2)}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-end">
-                                    <span className="text-[10px] font-bold text-white uppercase tracking-[0.4em]">Soma Parcial</span>
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-[0.4em]">Total</span>
                                     <span className="font-display text-4xl text-white">R$ {cartTotal.toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Mobile Button Location (Sticky Bottom) */}
-                        <div className="md:hidden sticky, bottom-0 bg-gusli-bg pt-4 pb-8 z-50 border-t border-black/20">
-                            <button
-                                onClick={handleProcessCheckout}
-                                disabled={isLoading}
-                                className="w-full bg-black text-gusli-bg py-5 font-sans font-bold text-2xl flex justify-center items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
-                            >
-                                {isLoading ? 'Aguarde' : 'Concluir Pedido'}
-                                {!isLoading && <ArrowRight size={24} />}
-                            </button>
+                        <div className="md:hidden sticky bottom-0 bg-gusli-bg pt-4 pb-8 z-50 border-t border-black/20">
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={handleProcessCheckout}
+                                    disabled={isLoading}
+                                    className="w-full bg-black text-gusli-bg py-5 font-sans font-bold text-2xl flex justify-center items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight transition-colors border border-transparent hover:bg-white hover:text-[#12271D] hover:border-[#12271D] rounded-full"
+                                >
+                                    {isLoading ? 'Aguarde' : 'Concluir Pedido'}
+                                    {!isLoading && <ArrowRight size={24} />}
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className={`w-full bg-gray-400 text-white/70 py-5 font-sans font-bold text-2xl flex justify-center items-center gap-4 tracking-tight rounded-full cursor-not-allowed select-none ${shaking ? 'animate-shake' : ''}`}
+                                    onClick={() => {
+                                        setShaking(true);
+                                        setTimeout(() => setShaking(false), 500);
+                                        toast('Você precisa ter uma conta para continuar com este pedido. 🔐\nCrie a sua ou faça login — é rápido!', {
+                                            duration: 5000,
+                                            icon: '👤',
+                                            style: {
+                                                borderRadius: '12px',
+                                                background: '#12271D',
+                                                color: '#fff',
+                                                fontSize: '14px',
+                                                padding: '14px 18px',
+                                                lineHeight: '1.6',
+                                            },
+                                        });
+                                    }}
+                                >
+                                    Concluir Pedido
+                                    <ArrowRight size={24} />
+                                </button>
+                            )}
                         </div>
 
                     </div>

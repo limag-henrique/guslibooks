@@ -17,6 +17,7 @@ import Success from './pages/Success';
 
 import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -34,6 +35,7 @@ function App() {
       <CartProvider>
         {showSplash && <SplashScreen />}
         <div className="flex flex-col min-h-screen bg-gusli-bg relative">
+          <Toaster position="bottom-center" />
           <Header />
           <main className="flex-grow">
             <Routes>

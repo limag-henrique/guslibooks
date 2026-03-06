@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { X, Minus, Plus, Trash2 } from 'lucide-react';
 import { API_URL } from '../config';
+import toast from 'react-hot-toast';
 
 export default function CartModal() {
-    const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
+    const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, cartTotal, cartSubtotal, totalCartQuantity, hasDiscount } = useCart();
 
     const navigate = useNavigate();
+    const [shaking, setShaking] = useState(false);
+    const isLoggedIn = !!localStorage.getItem('gusli_user');
 
     if (!isCartOpen) return null;
 
@@ -59,6 +63,12 @@ export default function CartModal() {
                                         <h3 className="font-bold text-black line-clamp-2 leading-tight">{item.product.name}</h3>
                                         {item.variation && <p className="text-sm text-black mt-1">Variante: {item.variation}</p>}
                                         <p className="text-sm text-black">{item.product.author}</p>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <span className="text-xs text-black/50">R$ {item.product.price.toFixed(2)}/un.</span>
+                                            {item.quantity > 1 && (
+                                                <span className="text-xs font-bold text-black">= R$ {(item.product.price * item.quantity).toFixed(2)}</span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="flex items-center justify-between mt-4">
@@ -95,20 +105,64 @@ export default function CartModal() {
 
                 {cartItems.length > 0 && (
                     <div className="p-6 border-t border-black bg-white">
-                        <div className="flex flex-col gap-4 mb-6">
+                        <div className="flex flex-col gap-3 mb-6">
+                            {totalCartQuantity >= 1 && totalCartQuantity <= 4 && (
+                                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                                    <span className="text-lg">🎁</span>
+                                    <p className="text-amber-800 text-xs font-semibold leading-snug">
+                                        Adicione mais <strong>{5 - totalCartQuantity} {5 - totalCartQuantity === 1 ? 'item' : 'itens'}</strong> e ganhe <strong>7% de desconto</strong> no total da sua compra!
+                                    </p>
+                                </div>
+                            )}
+                            {hasDiscount && (
+                                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                                    <span className="text-green-700 font-bold text-xs uppercase tracking-wider">🎉 Desconto de 7% aplicado!</span>
+                                    <span className="text-green-700 font-bold text-sm">-R$ {(cartSubtotal - cartTotal).toFixed(2)}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100">
                                 <span className="text-black font-bold uppercase tracking-widest text-xs">Total do Pedido</span>
-                                <span className="text-2xl font-black text-black">R$ {cartTotal.toFixed(2)}</span>
+                                <div className="flex flex-col items-end">
+                                    {hasDiscount && (
+                                        <span className="text-xs text-black/40 line-through">R$ {cartSubtotal.toFixed(2)}</span>
+                                    )}
+                                    <span className="text-2xl font-black text-black">R$ {cartTotal.toFixed(2)}</span>
+                                </div>
                             </div>
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            <button
-                                onClick={handleCheckout}
-                                className="w-full bg-black text-gusli-bg py-4 rounded-full font-bold hover:bg-white hover:text-[#12271D] hover:border-[#12271D] border border-transparent hover:scale-[1.02] transform transition-all shadow-md flex justify-center items-center gap-2 uppercase tracking-wider text-sm"
-                            >
-                                Revisar & Pagar Pedido
-                            </button>
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={handleCheckout}
+                                    className="w-full bg-black text-gusli-bg py-4 rounded-full font-bold hover:bg-white hover:text-[#12271D] hover:border-[#12271D] border border-transparent hover:scale-[1.02] transform transition-all shadow-md flex justify-center items-center gap-2 uppercase tracking-wider text-sm"
+                                >
+                                    Revisar &amp; Pagar Pedido
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className={`w-full bg-gray-400 text-white/70 py-4 rounded-full font-bold border border-transparent shadow-md flex justify-center items-center gap-2 uppercase tracking-wider text-sm cursor-not-allowed select-none ${shaking ? 'animate-shake' : ''}`}
+                                    onClick={() => {
+                                        setShaking(true);
+                                        setTimeout(() => setShaking(false), 500);
+                                        toast('Você precisa ter uma conta para continuar. 🔐\nCrie a sua ou faça login — é rápido!', {
+                                            duration: 5000,
+                                            icon: '👤',
+                                            style: {
+                                                borderRadius: '12px',
+                                                background: '#12271D',
+                                                color: '#fff',
+                                                fontSize: '14px',
+                                                padding: '14px 18px',
+                                                lineHeight: '1.6',
+                                            },
+                                        });
+                                    }}
+                                >
+                                    Revisar &amp; Pagar Pedido
+                                </button>
+                            )}
                         </div>
                     </div>
                 )}

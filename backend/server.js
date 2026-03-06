@@ -192,7 +192,7 @@ app.post('/api/checkout', async (req, res) => {
         from: 'henriquelimagusmao@gmail.com',
         to: formData?.email,
         subject: 'Confirmação de Pedido - Gusli Books',
-        text: 'Seu pedido foi feito. Entraremos em contato para realizar o pagamento em breve. Obrigado por pedir na Gusli Books.'
+        text: 'Seu pedido foi feito. Entraremos em contato para realizar o pagamento em breve. Obrigado por pedir na Gusli Books.\n\nObrigado por testar esta API! Caso tenha alguma dúvida em relação ao funcionamento ou algo em específico, podemos conversar, que tentarei fazer o meu possível para deixar mais elucidado. Entre em contato através do WhatsApp wa.me/5531994217926 ou através do e-mail henriquelimagusmao@gmail.com'
     };
 
     try {
