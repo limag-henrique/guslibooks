@@ -20,15 +20,11 @@ import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [isAppRevealed, setIsAppRevealed] = useState(false);
 
   useEffect(() => {
-    // Exactly at 3000ms, the loading page closes and the circular reveal triggers
     const timer = setTimeout(() => {
       setShowSplash(false);
-      setIsAppRevealed(true);
-    }, 1000);
-
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -36,20 +32,8 @@ function App() {
     <Router>
       <ScrollToTop />
       <CartProvider>
-        {/* The persistent dark green background that the app reveals *from* */}
-        <div className="fixed inset-0 bg-[#12271D] z-[-1]" />
-
         {showSplash && <SplashScreen />}
-
-        {/* The main app container that geometricially expands */}
-        <div
-          className="flex flex-col min-h-screen bg-gusli-bg relative"
-          style={{
-            clipPath: isAppRevealed ? 'circle(150vw at 50vw 50vh)' : 'circle(0px at 50vw 50vh)',
-            WebkitClipPath: isAppRevealed ? 'circle(150vw at 50vw 50vh)' : 'circle(0px at 50vw 50vh)',
-            transition: 'clip-path 1s cubic-bezier(0.64, 0, 0.78, 0), -webkit-clip-path 1s cubic-bezier(0.64, 0, 0.78, 0)'
-          }}
-        >
+        <div className="flex flex-col min-h-screen bg-gusli-bg relative">
           <Header />
           <main className="flex-grow">
             <Routes>

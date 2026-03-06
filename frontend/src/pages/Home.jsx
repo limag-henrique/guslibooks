@@ -46,7 +46,7 @@ export default function Home() {
                     <img src="/íconebanner.png" alt="Ícone Banner" className="w-[120px] md:w-[150px] animate-in fade-in slide-in-from-bottom-4 duration-1000" />
                     <div className="flex flex-col items-center md:items-start">
                         <p className="text-white tracking-wide font-bold text-xl md:text-2xl mb-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                            Leitura descomplicada
+                            Seleção de livros que não pegam poeira na estante
                         </p>
 
                         <h1 className="font-sans font-bold text-[8vw] md:text-[6vw] leading-[0.85] text-white tracking-tight mb-10 max-w-6xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
