@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { Wand2, Filter, Search, List, ShoppingCart } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { API_URL } from '../config';
 
 export default function Products() {
     const [books, setBooks] = useState([]);
@@ -41,7 +42,7 @@ export default function Products() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/products');
+                const response = await axios.get(`${API_URL}/api/products`);
                 setBooks(response.data);
             } catch (error) {
                 console.error("Error fetching books:", error);
@@ -255,7 +256,7 @@ export default function Products() {
                                         >
                                             <div className="relative aspect-[3/4] overflow-hidden bg-[#f5f5f5]">
                                                 <img
-                                                    src={`http://localhost:3001${book.image_path}`}
+                                                    src={`${API_URL}${book.image_path}`}
                                                     alt={book.name}
                                                     className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-50"
                                                     onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}

@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ShieldCheck, ArrowLeft, ArrowRight } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function Checkout() {
     const { cartItems, cartTotal, clearCart } = useCart();
@@ -119,7 +120,7 @@ export default function Checkout() {
             const storedUser = localStorage.getItem('gusli_user');
             const user = storedUser ? JSON.parse(storedUser) : null;
 
-            await axios.post('http://localhost:3001/api/checkout', {
+            await axios.post(`${API_URL}/api/checkout`, {
                 userId: user ? user.id : null,
                 total: cartTotal,
                 items: cartItems,

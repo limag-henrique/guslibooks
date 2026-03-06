@@ -3,15 +3,19 @@
 > [!NOTE]  
 > Olá! Seja bem-vindo ao repositório do Gusli Books!
 
-Este projeto foi inteiramente gerado por inteligência artificial (Antigravity, do Google), dada a minha falta de conhecimento técnico para codificá-lo do zero. O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 13 horas.
+Este projeto foi inteiramente gerado por inteligência artificial (Antigravity, do Google), dada a minha falta de conhecimento técnico para codificá-lo do zero. O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 14 horas.
 
 Os prompts foram formulados a partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando e deixei uma mensagem especial para você, avaliador, na página: [dti_prompts](https://limag-henrique.github.io/dti_prompts/).
 
+Por curiosidade, os 65 livros são livros que li/estou lendo/lerei, então considere-os como uma possível sugestão de leitura real ;)
+
 ## Pré-requisitos
 
-Certifique-se de que você possui as seguintes ferramentas instaladas:
-- **Node.js**: (versão 18 ou superior --> Para verificar, digite node -v)
-- **npm**: (gerenciador de pacotes do Node --> Para verificar, digite npm -v)
+Certifique-se de que você possui o node.js instalado:
+- Node.js: (versão 18 ou superior --> Para verificar, digite `node -v`)
+
+- Caso não o tenha (Erro de comando não encontrado), baixe-o em: [Node.js](https://nodejs.org/pt-br/download)
+- Se estiver com algum erro de permissão, execute: `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
 ---
 

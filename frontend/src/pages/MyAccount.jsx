@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { User, Package, LogOut, ArrowRight, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 
 export default function MyAccount() {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function MyAccount() {
             const fetchOrders = async () => {
                 setLoadingOrders(true);
                 try {
-                    const response = await axios.get(`http://localhost:3001/api/user/orders?userId=${user.id}`);
+                    const response = await axios.get(`${API_URL}/api/user/orders?userId=${user.id}`);
                     setOrders(response.data);
                 } catch (error) {
                     console.error("Error fetching orders:", error);
@@ -55,7 +56,7 @@ export default function MyAccount() {
             const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
             const payload = isLogin ? { email: formData.email, password: formData.password } : formData;
 
-            const response = await axios.post(`http://localhost:3001${endpoint}`, payload);
+            const response = await axios.post(`${API_URL}${endpoint}`, payload);
 
             // Success
             const userData = response.data;
@@ -193,7 +194,7 @@ export default function MyAccount() {
                     onClick={async () => {
                         if (window.confirm("Tem certeza que deseja apagar sua conta? Esta ação é irreversível.")) {
                             try {
-                                await axios.delete(`http://localhost:3001/api/user/${user.id}`);
+                                await axios.delete(`${API_URL}/api/user/${user.id}`);
                                 handleLogout();
                             } catch (err) {
                                 console.error("Error deleting account:", err);

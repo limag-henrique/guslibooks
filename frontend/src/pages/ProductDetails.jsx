@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft, ShoppingBag } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function ProductDetails() {
     const { id } = useParams();
@@ -19,7 +20,7 @@ export default function ProductDetails() {
         const fetchBookDetails = async () => {
             try {
                 // Fetch all books to find current and compute recommendations
-                const response = await axios.get('http://localhost:3001/api/products');
+                const response = await axios.get(`${API_URL}/api/products`);
                 const allBooks = response.data;
                 const foundBook = allBooks.find(b => b.id === parseInt(id));
 
@@ -150,7 +151,7 @@ export default function ProductDetails() {
                     {/* Right Image Block */}
                     <div className="lg:col-span-7 flex justify-center items-center order-1 lg:order-2 relative h-full w-full">
                         <img
-                            src={`http://localhost:3001${book.image_path}`}
+                            src={`${API_URL}${book.image_path}`}
                             alt={book.name}
                             className="w-[180px] md:w-[220px] lg:w-[260px] max-w-none object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
                             onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}
@@ -211,7 +212,7 @@ export default function ProductDetails() {
                             >
                                 <div className="relative aspect-[2/3] overflow-hidden bg-white border-b border-black">
                                     <img
-                                        src={`http://localhost:3001${rec.image_path}`}
+                                        src={`${API_URL}${rec.image_path}`}
                                         alt={rec.name}
                                         className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-40"
                                         onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}

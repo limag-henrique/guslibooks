@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import { ShoppingBag, ChevronDown, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 export default function Header() {
     const { cartItems, setIsCartOpen } = useCart();
@@ -26,7 +27,7 @@ export default function Header() {
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/products');
+                const response = await axios.get(`${API_URL}/api/products`);
                 const uniqueGenres = new Set(response.data.map(b => b.genre).filter(Boolean));
                 setGenres(Array.from(uniqueGenres).sort());
             } catch (error) {
@@ -46,7 +47,7 @@ export default function Header() {
 
                 {/* Typographic Logo */}
                 <Link to="/" className="flex items-center gap-4 group">
-                    <img src="http://localhost:3001/visual/logo.png" alt="Gusli Logo" className="h-8 md:h-12 w-auto object-contain" />
+                    <img src=`${API_URL}/visual/logo.png` alt="Gusli Logo" className="h-8 md:h-12 w-auto object-contain" />
                     <span className="font-sans font-bold text-2xl tracking-tight text-white group-hover:text-gusli-bg transition-colors duration-300 hidden sm:block">Gusli Books</span>
                 </Link>
 

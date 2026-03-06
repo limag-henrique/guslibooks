@@ -27,7 +27,7 @@ function App() {
     const timer = setTimeout(() => {
       setShowSplash(false);
       setIsAppRevealed(true);
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -47,7 +47,7 @@ function App() {
           style={{
             clipPath: isAppRevealed ? 'circle(150vw at 50vw 50vh)' : 'circle(0px at 50vw 50vh)',
             WebkitClipPath: isAppRevealed ? 'circle(150vw at 50vw 50vh)' : 'circle(0px at 50vw 50vh)',
-            transition: 'clip-path 2.5s cubic-bezier(0.64, 0, 0.78, 0), -webkit-clip-path 2.5s cubic-bezier(0.64, 0, 0.78, 0)'
+            transition: 'clip-path 1s cubic-bezier(0.64, 0, 0.78, 0), -webkit-clip-path 1s cubic-bezier(0.64, 0, 0.78, 0)'
           }}
         >
           <Header />

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { X, Minus, Plus, Trash2 } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function CartModal() {
     const { isCartOpen, setIsCartOpen, cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
@@ -47,7 +48,7 @@ export default function CartModal() {
                         cartItems.map((item, index) => (
                             <div key={index} className="flex gap-4 p-4 border rounded-xl border-black bg-white">
                                 <img
-                                    src={`http://localhost:3001${item.product.image_path}`}
+                                    src={`${API_URL}${item.product.image_path}`}
                                     alt={item.product.name}
                                     className="w-20 h-28 object-cover rounded shadow-sm"
                                     onError={(e) => { e.target.src = 'https://placehold.co/100x150/png?text=No+Cover' }}

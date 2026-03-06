@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { ArrowRight, ShoppingCart, TreePine, Leaf } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function Home() {
     const [randomBooks, setRandomBooks] = useState([]);
@@ -14,7 +15,7 @@ export default function Home() {
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/products');
+                const response = await axios.get(`${API_URL}/api/products`);
                 const allBooks = response.data;
                 const shuffled = [...allBooks].sort(() => 0.5 - Math.random());
                 setRandomBooks(shuffled.slice(0, 4));
@@ -118,7 +119,7 @@ export default function Home() {
                                 {/* Image Box */}
                                 <div className="relative aspect-[3/4] overflow-hidden bg-[#f5f5f5] flex items-center justify-center p-8">
                                     <img
-                                        src={`http://localhost:3001${book.image_path}`}
+                                        src={`${API_URL}${book.image_path}`}
                                         alt={book.name}
                                         className="max-w-full max-h-full object-contain transition-opacity duration-300 group-hover:opacity-50 drop-shadow-md"
                                         onError={(e) => { e.target.src = 'https://placehold.co/400x600/png?text=No+Cover' }}
