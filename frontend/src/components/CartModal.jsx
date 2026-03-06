@@ -108,7 +108,6 @@ export default function CartModal() {
                         <div className="flex flex-col gap-3 mb-6">
                             {totalCartQuantity >= 1 && totalCartQuantity <= 4 && (
                                 <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-                                    <span className="text-lg">🎁</span>
                                     <p className="text-amber-800 text-xs font-semibold leading-snug">
                                         Adicione mais <strong>{5 - totalCartQuantity} {5 - totalCartQuantity === 1 ? 'item' : 'itens'}</strong> e ganhe <strong>7% de desconto</strong> no total da sua compra!
                                     </p>
@@ -116,7 +115,7 @@ export default function CartModal() {
                             )}
                             {hasDiscount && (
                                 <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                                    <span className="text-green-700 font-bold text-xs uppercase tracking-wider">🎉 Desconto de 7% aplicado!</span>
+                                    <span className="text-green-700 font-bold text-xs uppercase tracking-wider">Desconto de 7% aplicado!</span>
                                     <span className="text-green-700 font-bold text-sm">-R$ {(cartSubtotal - cartTotal).toFixed(2)}</span>
                                 </div>
                             )}

@@ -85,6 +85,14 @@ O frontend é construído com React e Vite, estilizado com Tailwind CSS.
 
 ---
 
+## Premissas
+
+1. O foco é divulgar as obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (materializado pelo botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista)
+2. Para o Proof-of-Concept, a loja não possui gateways de pagamentos diretos. O sistema captura a intenção de compra, cadastra o pedido, notifica a gerência por e-mail e informa virtualmente ao usuário que a equipe da Gusli entrará em contato com ele em breve com as faturas.
+3. O frete não é contabilizado no total do carrinho. 
+
+---
+
 ## Documentação da API (Backend)
 
 ### Principais Arquivos
@@ -129,11 +137,3 @@ O frontend é construído com React e Vite, estilizado com Tailwind CSS.
   - **Função:** Retorna o histórico de pedidos amarrado ao ID do usuário autenticado.
 - `DELETE /api/user/:id`
   - **Função:** Exclui permanentemente a conta do usuário e os seus dados.
-
----
-
-## Premissas
-
-1. O foco é divulgar as obras literárias de impressão humanizada num aspecto editorial para o consumidor. O site foi desenhado para incentivar descobertas e navegação casual (materializado pelo botão de obras aleatórias, exibição cinemática de detalhes, separação minimalista)
-2. Para o Proof-of-Concept, a loja não possui gateways de pagamentos diretos. O sistema captura a intenção de compra, cadastra o pedido, notifica a gerência por e-mail e informa virtualmente ao usuário que a equipe da Gusli entrará em contato com ele em breve com as faturas.
-3. O frete não é contabilizado no total do carrinho. 

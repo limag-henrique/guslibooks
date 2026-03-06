@@ -315,7 +315,7 @@ export default function Checkout() {
                                 )}
                                 {hasDiscount && (
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-bold text-green-300 uppercase tracking-[0.3em]">🎉 Desconto 7%</span>
+                                        <span className="text-[10px] font-bold text-green-300 uppercase tracking-[0.3em]">Desconto 7%</span>
                                         <span className="text-green-300 font-bold text-sm">-R$ {(cartSubtotal - cartTotal).toFixed(2)}</span>
                                     </div>
                                 )}
