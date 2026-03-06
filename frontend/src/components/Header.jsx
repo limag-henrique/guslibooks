@@ -47,7 +47,7 @@ export default function Header() {
 
                 {/* Typographic Logo */}
                 <Link to="/" className="flex items-center gap-4 group">
-                    <img src=`${API_URL}/visual/logo.png` alt="Gusli Logo" className="h-8 md:h-12 w-auto object-contain" />
+                    <img src={`${API_URL}/visual/logo.png`} alt="Gusli Logo" className="h-8 md:h-12 w-auto object-contain" />
                     <span className="font-sans font-bold text-2xl tracking-tight text-white group-hover:text-gusli-bg transition-colors duration-300 hidden sm:block">Gusli Books</span>
                 </Link>
 
