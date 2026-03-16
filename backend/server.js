@@ -231,6 +231,14 @@ app.delete('/api/user/:id', (req, res) => {
     });
 });
 
+// 1. Aponta para a pasta 'dist' que o React vai gerar no Build Command
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// 2. Qualquer requisição que o usuário faça que não seja para a sua API, ele mostra o site do React
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
