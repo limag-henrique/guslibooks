@@ -235,7 +235,7 @@ app.delete('/api/user/:id', (req, res) => {
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // 2. Qualquer requisição que o usuário faça que não seja para a sua API, ele mostra o site do React
-app.get('*', (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
