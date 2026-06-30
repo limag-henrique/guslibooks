@@ -4,11 +4,11 @@ Olá! Seja bem-vindo ao repositório do Gusli Books!
 
 Este projeto foi inteiramente gerado com o auxílio de inteligência artificial generativa (Antigravity, do Google --> Modelo Gemini 3.1 Pro). O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 14 horas.
 
-Os prompts foram formulados a partir da experiência prática do usuário e dos requisitos do projeto. Para fins de organização, separei os prompts de comando e deixei uma mensagem especial para você, avaliador, na página: [dti_prompts](https://limag-henrique.github.io/dti_prompts/).
+Para acessar sem demora, basta acessar em: [gusli-books.onrender.com](gusli-books.onrender.com)
 
 Por curiosidade, os 65 livros são livros que li/estou lendo/lerei, então considere-os como uma possível sugestão de leitura real ;)
 
-## Obter o Projeto
+## Obter o Projeto localmente
 
 Antes de tudo, você precisa ter os arquivos do projeto na sua máquina. Existem duas formas:
 
