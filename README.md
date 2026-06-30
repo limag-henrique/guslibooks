@@ -4,7 +4,7 @@ Olá! Seja bem-vindo ao repositório do Gusli Books!
 
 Este projeto foi inteiramente gerado com o auxílio de inteligência artificial generativa (Antigravity, do Google --> Modelo Gemini 3.1 Pro). O tempo necessário para a finalização, ajustes e testes foi de aproximadamente 14 horas.
 
-Para acessar sem demora, basta acessar em: [gusli-books.onrender.com](gusli-books.onrender.com)
+Para acessar sem demora, basta acessar em: [Gusli Books - Render](https://gusli-books.onrender.com/)
 
 Por curiosidade, os 65 livros são livros que li/estou lendo/lerei, então considere-os como uma possível sugestão de leitura real ;)
 
